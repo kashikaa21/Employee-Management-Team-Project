@@ -1,4 +1,4 @@
-```python
+
 from fastapi import FastAPI
 
 # Attendance module
@@ -54,4 +54,4 @@ app.include_router(
     prefix="/salary",
     tags=["Salary Records"]
 )
-```
+
