@@ -1,5 +1,7 @@
 
 # Virtual environment
+ems/
+.ems/
 .venv/
 venv/
 env/
