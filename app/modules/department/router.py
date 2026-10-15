@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from modules.department import service
-from modules.department.schema import Department
+from app.modules.department import service
+from app.modules.department.schema import Department
 
 router = APIRouter()
 

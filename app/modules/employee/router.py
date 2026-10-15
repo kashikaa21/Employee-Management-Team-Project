@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException
 from app.modules.employee.schema import EmployeeSchema
 from app.modules.employee import service
 
-router = APIRouter(prefix="/employees", tags=["Employees"])
+router = APIRouter()
 
 
 # Get all employees

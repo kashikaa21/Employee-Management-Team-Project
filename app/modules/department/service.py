@@ -1,4 +1,4 @@
-from modules.department.schema import Department
+from app.modules.department.schema import Department
 departments = [
     Department(id = 1 , name = "Engineering" , description = "Software Development"),
     Department(id = 2 , name = "Human Resources" , description = "Recruitment and Employee Support"),

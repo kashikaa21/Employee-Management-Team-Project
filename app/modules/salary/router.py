@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from app.modules.salary.schema import Salary
 from app.modules.salary import service
 
-router = APIRouter(prefix="/salaries", tags=["Salary"])
+router = APIRouter()
 
 
 @router.get("/")
