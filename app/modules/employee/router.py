@@ -1,5 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
+from app.database import get_db
 from app.modules.employee.schema import EmployeeSchema
 from app.modules.employee import service
 
@@ -12,17 +14,23 @@ from app.modules.employee.exceptions import (
 router = APIRouter()
 
 
-# Get all employees
 @router.get("/")
-def list_employees():
-    return service.get_all_employees()
+def list_employees(
+    db: Session = Depends(get_db)
+):
+    return service.get_all_employees(db)
 
 
-# Get employee by ID
 @router.get("/{employee_id}")
-def get_employee(employee_id: int):
+def get_employee(
+    employee_id: int,
+    db: Session = Depends(get_db)
+):
     try:
-        return service.get_employee_by_id(employee_id)
+        return service.get_employee_by_id(
+            employee_id,
+            db
+        )
 
     except EmployeeNotFoundException as e:
         raise HTTPException(
@@ -34,11 +42,16 @@ def get_employee(employee_id: int):
         )
 
 
-# Add a new employee
 @router.post("/", status_code=201)
-def add_employee(employee: EmployeeSchema):
+def add_employee(
+    employee: EmployeeSchema,
+    db: Session = Depends(get_db)
+):
     try:
-        return service.create_employee(employee)
+        return service.create_employee(
+            employee,
+            db
+        )
 
     except EmployeeAlreadyExistsException as e:
         raise HTTPException(
@@ -50,16 +63,17 @@ def add_employee(employee: EmployeeSchema):
         )
 
 
-# Update an employee
 @router.put("/{employee_id}")
 def update_employee(
     employee_id: int,
-    updated_data: EmployeeSchema
+    updated_data: EmployeeSchema,
+    db: Session = Depends(get_db)
 ):
     try:
         return service.update_employee(
             employee_id,
-            updated_data
+            updated_data,
+            db
         )
 
     except EmployeeNotFoundException as e:
@@ -72,11 +86,16 @@ def update_employee(
         )
 
 
-# Delete an employee
 @router.delete("/{employee_id}")
-def remove_employee(employee_id: int):
+def remove_employee(
+    employee_id: int,
+    db: Session = Depends(get_db)
+):
     try:
-        deleted = service.delete_employee(employee_id)
+        deleted = service.delete_employee(
+            employee_id,
+            db
+        )
 
         return {
             "message": "Employee deleted",
