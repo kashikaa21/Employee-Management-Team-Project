@@ -1,45 +1,81 @@
-
 from app.modules.salary.schema import Salary
+from sqlalchemy.orm import Session
+from app.modules.salary.model import SalaryModel
 
-salaries = [
-    Salary(salary_id=1, employee_id=101, basic_salary=45000.0, allowances=5000.0, deductions=2000.0),
-    Salary(salary_id=2, employee_id=102, basic_salary=55000.0, allowances=7000.0, deductions=3000.0),
-    Salary(salary_id=3, employee_id=103, basic_salary=40000.0, allowances=3500.0, deductions=1500.0)
-]
-
-def get_all_salaries():
-    return salaries
+from app.common.exception_handler import SalaryNotFoundException
 
 
-def get_salary_by_id(salary_id: int):
-    for salary in salaries:
-        if salary.salary_id == salary_id:
-            return salary
+def get_all_salaries(db: Session):
 
-    return None
+    return db.query(SalaryModel).all()
 
 
-def add_salary(salary: Salary):
-    salaries.append(salary)
+def get_salary_by_id(db: Session, salary_id: int):
+
+    salary = (
+        db.query(SalaryModel)
+        .filter(SalaryModel.salary_id == salary_id)
+        .first()
+    )
+
+    if not salary:
+        raise SalaryNotFoundException(salary_id)
+
     return salary
 
 
+def add_salary(db: Session, salary: Salary):
 
-def update_salary(salary_id: int, salary: Salary):
-    for i in range(len(salaries)):
-        if salaries[i].salary_id == salary_id:
-            salaries[i] = salary
-            return salary
+    new_salary = SalaryModel(
+        employee_id=salary.employee_id,
+        basic_salary=salary.basic_salary,
+        allowances=salary.allowances,
+        deductions=salary.deductions
+    )
 
-    return None
+    db.add(new_salary)
+    db.commit()
+    db.refresh(new_salary)
+
+    return new_salary
 
 
-def delete_salary(salary_id: int):
-    for i in range(len(salaries)):
-        if salaries[i].salary_id == salary_id:
-            deleted_salary = salaries[i]
-            del salaries[i]
-            return deleted_salary
+def update_salary(db: Session,salary_id: int, salary_data: Salary):
 
-    return None
+    salary = (
+        db.query(SalaryModel)
+        .filter(SalaryModel.salary_id == salary_id)
+        .first()
+    )
 
+    if not salary:
+        raise SalaryNotFoundException(salary_id)
+
+    salary.employee_id = salary_data.employee_id
+    salary.basic_salary = salary_data.basic_salary
+    salary.allowances = salary_data.allowances
+    salary.deductions = salary_data.deductions
+
+    db.commit()
+    db.refresh(salary)
+
+    return salary
+
+
+def delete_salary(db: Session, salary_id: int):
+
+    salary = (
+        db.query(SalaryModel)
+        .filter(SalaryModel.salary_id == salary_id)
+        .first()
+    )
+
+    if not salary:
+        raise SalaryNotFoundException(salary_id)
+
+    db.delete(salary)
+    db.commit()
+
+    return {
+        "message": "Salary Deleted Successfully"
+    }

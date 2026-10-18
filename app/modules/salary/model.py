@@ -1,8 +1,19 @@
+from sqlalchemy import Column, Integer, Float
+from app.database import Base
 
 
-'''def __init__(self,salary_id: int, employee_id: int,basic_salary:int, allowances: int, deductions: int)
-    self.salary_id= salary_id
-    self.employee_id= employee_id
-    self.basic_salary= basic_salary
-    self.allowances= allowances
-    self.deductions= deductions'''
+class SalaryModel(Base):
+
+    __tablename__ = "salaries"
+
+    salary_id = Column(Integer, primary_key=True, index=True)
+
+    employee_id = Column(Integer,nullable=False)
+
+    basic_salary = Column(Float, nullable=False)
+
+    allowances = Column(Float, nullable=False)
+
+    deductions = Column(Float, nullable=False)
+
+    
