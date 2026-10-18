@@ -5,8 +5,7 @@ from app.modules.department import service
 from app.modules.department.schema import DepartmentCreate
 from app.database import get_db
 
-router = APIRouter(prefix="/departments", tags=["Departments"])
-
+router = APIRouter()
 
 @router.get("")
 def get_departments(db: Session = Depends(get_db)):

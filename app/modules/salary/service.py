@@ -2,8 +2,7 @@ from app.modules.salary.schema import Salary
 from sqlalchemy.orm import Session
 from app.modules.salary.model import SalaryModel
 
-from app.common.exception_handler import SalaryNotFoundException
-
+from app.common.exceptions import SalaryNotFoundException
 
 def get_all_salaries(db: Session):
 

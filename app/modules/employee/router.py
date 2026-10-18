@@ -9,7 +9,7 @@ from app.modules.employee.exceptions import (
 )
 
 
-router = APIRouter(prefix="/employees", tags=["Employees"])
+router = APIRouter()
 
 
 # Get all employees

@@ -1,11 +1,10 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
-from app.common.exception_handler import (
+from app.common.exceptions import (
     SalaryNotFoundException,
     DatabaseException
 )
-
 
 async def salary_not_found_handler(
         request: Request,
