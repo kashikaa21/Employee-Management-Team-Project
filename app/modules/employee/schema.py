@@ -1,5 +1,3 @@
-
-
 from pydantic import BaseModel, Field
 
 
@@ -10,3 +8,5 @@ class EmployeeSchema(BaseModel):
     designation: str
     salary: float = Field(gt=0)
 
+    class Config:
+        from_attributes = True

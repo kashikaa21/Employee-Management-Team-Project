@@ -1,7 +1,13 @@
-
 from fastapi import APIRouter, HTTPException
+
 from app.modules.employee.schema import EmployeeSchema
 from app.modules.employee import service
+
+from app.modules.employee.exceptions import (
+    EmployeeNotFoundException,
+    EmployeeAlreadyExistsException
+)
+
 
 router = APIRouter(prefix="/employees", tags=["Employees"])
 
@@ -15,42 +21,73 @@ def list_employees():
 # Get employee by ID
 @router.get("/{employee_id}")
 def get_employee(employee_id: int):
-    employee = service.get_employee_by_id(employee_id)
+    try:
+        return service.get_employee_by_id(employee_id)
 
-    if employee is None:
-        raise HTTPException(status_code=404, detail="Employee not found")
-
-    return employee
+    except EmployeeNotFoundException as e:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": "EmployeeNotFoundException",
+                "message": str(e)
+            }
+        )
 
 
 # Add a new employee
 @router.post("/", status_code=201)
 def add_employee(employee: EmployeeSchema):
-    created = service.create_employee(employee)
+    try:
+        return service.create_employee(employee)
 
-    if created is None:
-        raise HTTPException(status_code=409, detail="Employee ID already exists")
-
-    return created
+    except EmployeeAlreadyExistsException as e:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error": "EmployeeAlreadyExistsException",
+                "message": str(e)
+            }
+        )
 
 
 # Update an employee
 @router.put("/{employee_id}")
-def update_employee(employee_id: int, updated_data: EmployeeSchema):
-    updated = service.update_employee(employee_id, updated_data)
+def update_employee(
+    employee_id: int,
+    updated_data: EmployeeSchema
+):
+    try:
+        return service.update_employee(
+            employee_id,
+            updated_data
+        )
 
-    if updated is None:
-        raise HTTPException(status_code=404, detail="Employee not found")
-
-    return updated
+    except EmployeeNotFoundException as e:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": "EmployeeNotFoundException",
+                "message": str(e)
+            }
+        )
 
 
 # Delete an employee
 @router.delete("/{employee_id}")
 def remove_employee(employee_id: int):
-    deleted = service.delete_employee(employee_id)
+    try:
+        deleted = service.delete_employee(employee_id)
 
-    if deleted is None:
-        raise HTTPException(status_code=404, detail="Employee not found")
+        return {
+            "message": "Employee deleted",
+            "employee": deleted
+        }
 
-    return {"message": "Employee deleted", "employee": deleted}
+    except EmployeeNotFoundException as e:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": "EmployeeNotFoundException",
+                "message": str(e)
+            }
+        )
