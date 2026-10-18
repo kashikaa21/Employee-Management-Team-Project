@@ -10,6 +10,7 @@ from app.database import get_db
 from app.modules.employee.schema import EmployeeSchema
 from app.modules.employee import service
 
+<<<<<<< HEAD
 from app.modules.employee.exceptions import (
     EmployeeNotFoundException,
     EmployeeAlreadyExistsException
@@ -24,6 +25,9 @@ router = APIRouter(
     tags=["Employees"]
 )
 >>>>>>> Stashed changes
+=======
+router = APIRouter()
+>>>>>>> main
 
 
 @router.get("/")
