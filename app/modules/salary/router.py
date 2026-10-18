@@ -9,20 +9,14 @@ router = APIRouter()
 
 
 @router.get("/")
-def get_all_salaries(
-    db: Session = Depends(get_db)
-):
+def get_all_salaries( db: Session = Depends(get_db)):
     return service.get_all_salaries(db)
 
 
 @router.get("/{salary_id}")
 def get_salary_by_id(
-    salary_id: int,
-    db: Session = Depends(get_db)
-):
-    return service.get_salary_by_id(
-        db,
-        salary_id
+    salary_id: int,db: Session = Depends(get_db)):
+    return service.get_salary_by_id(db,salary_id
     )
 
 
@@ -31,10 +25,7 @@ def add_salary(
     salary: Salary,
     db: Session = Depends(get_db)
 ):
-    return service.add_salary(
-        db,
-        salary
-    )
+    return service.add_salary(db,salary )
 
 
 @router.put("/{salary_id}")
@@ -44,9 +35,7 @@ def update_salary(
     db: Session = Depends(get_db)
 ):
     updated_salary = service.update_salary(
-        db,
-        salary_id,
-        salary
+        db,salary_id,salary
     )
 
     if updated_salary is None:
@@ -61,8 +50,7 @@ def delete_salary(
     db: Session = Depends(get_db)
 ):
     deleted_salary = service.delete_salary(
-        db,
-        salary_id
+        db,salary_id
     )
 
     if deleted_salary is None:
