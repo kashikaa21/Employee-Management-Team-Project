@@ -1,43 +1,73 @@
-from app.modules.department.schema import Department
-departments = [
-    Department(id = 1 , name = "Engineering" , description = "Software Development"),
-    Department(id = 2 , name = "Human Resources" , description = "Recruitment and Employee Support"),
-    Department(id = 3 , name = "Finance" , description = "Budgeting and Finance")
-]
+from sqlalchemy.orm import Session
 
-def get_departments():
-    return departments
+from app.modules.department.model import Department
 
-def get_dept_by_id(id):
-    for dept in departments:
-        if dept.id == id:
-            return dept
-    return f"No department with {id} exists !!"
 
-def create_new_dept(data):
-    for dept in departments:
-        if dept.id == data.id:
-            return "Department already exists"
+def get_departments(db: Session):
+    return db.query(Department).all()
 
-    departments.append(data)
-    return f"Department added successfully ! Department id is : {data.id}"
 
-def update_dept(id , data):
-    for dept in departments:
-        if dept.id == id:
-            if data.id == id:
-                dept.name = data.name
-                dept.description = data.description
-                return dept
-            else:
-                return "ID could not be updated !!"
-    return f"No department exists with id {id}"
-    
-    
-def delete_dept(id):
-    for i , dept in enumerate(departments):
-        if dept.id == id:
-            departments.pop(i)
-            return "Department deleted succesfully"
-    return f"No department exists with id {id}"
+def get_dept_by_id(id: int, db: Session):
+
+    dept = (
+        db.query(Department)
+        .filter(Department.id == id)
+        .first()
+    )
+
+    if not dept:
+        return {"message": f"No department with id {id} exists"}
+
+    return dept
+
+
+def create_new_dept(data, db: Session):
+
+    dept = Department(
+        name=data.name,
+        description=data.description
+    )
+
+    db.add(dept)
+    db.commit()
+    db.refresh(dept)
+
+    return dept
+
+
+def update_dept(id: int, data, db: Session):
+
+    dept = (
+        db.query(Department)
+        .filter(Department.id == id)
+        .first()
+    )
+
+    if not dept:
+        return {"message": f"No department exists with id {id}"}
+
+    dept.name = data.name
+    dept.description = data.description
+
+    db.commit()
+    db.refresh(dept)
+
+    return dept
+
+
+def delete_dept(id: int, db: Session):
+
+    dept = (
+        db.query(Department)
+        .filter(Department.id == id)
+        .first()
+    )
+
+    if not dept:
+        return {"message": f"No department exists with id {id}"}
+
+    db.delete(dept)
+    db.commit()
+
+    return {"message": "Department deleted successfully"}
 

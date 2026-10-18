@@ -4,6 +4,11 @@ from app.modules.department.router import router as department_router
 from app.modules.employee.router import router as employee_router
 from app.modules.salary.router import router as salary_router
 
+from app.database import engine, Base
+from app.modules.department.model import Department
+
+Base.metadata.create_all(bind=engine)
+
 
 app = FastAPI(
     title="Employee Management System",
