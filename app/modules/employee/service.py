@@ -1,5 +1,9 @@
-
 from app.modules.employee.schema import EmployeeSchema
+
+from app.modules.employee.exceptions import (
+    EmployeeNotFoundException,
+    EmployeeAlreadyExistsException
+)
 
 # employee data
 employees = [
@@ -44,26 +48,37 @@ def get_employee_by_id(employee_id: int):
     for employee in employees:
         if employee.employee_id == employee_id:
             return employee
-    return None
+
+    raise EmployeeNotFoundException(
+        f"Employee with ID {employee_id} not found"
+    )
 
 
 # Add a new employee
 def create_employee(employee: EmployeeSchema):
     for existing in employees:
         if existing.employee_id == employee.employee_id:
-            return None
+            raise EmployeeAlreadyExistsException(
+                "Employee ID already exists"
+            )
 
     employees.append(employee)
     return employee
 
 
 # Update an employee
-def update_employee(employee_id: int, updated_data: EmployeeSchema):
+def update_employee(
+    employee_id: int,
+    updated_data: EmployeeSchema
+):
     for index, employee in enumerate(employees):
         if employee.employee_id == employee_id:
             employees[index] = updated_data
             return updated_data
-    return None
+
+    raise EmployeeNotFoundException(
+        f"Employee with ID {employee_id} not found"
+    )
 
 
 # Delete an employee
@@ -71,4 +86,7 @@ def delete_employee(employee_id: int):
     for index, employee in enumerate(employees):
         if employee.employee_id == employee_id:
             return employees.pop(index)
-    return None
+
+    raise EmployeeNotFoundException(
+        f"Employee with ID {employee_id} not found"
+    )
